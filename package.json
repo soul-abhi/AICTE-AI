@@ -1,0 +1,19 @@
+{
+  "name": "ai-resume-portfolio-builder",
+  "private": true,
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace=client",
+    "build": "npm run build --workspace=client && npm run build --workspace=server",
+    "lint": "npm run lint --workspace=client && npm run lint --workspace=server",
+    "start:server": "npm start --workspace=server",
+    "start:client": "npm run preview --workspace=client",
+    "vercel-build": "npm run build --workspace=client"
+  },
+  "engines": {
+    "node": ">=18.x"
+  }
+}
