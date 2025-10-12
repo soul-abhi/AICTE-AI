@@ -71,10 +71,6 @@ export default function RegisterPage() {
         >
           {loading ? 'Creating account...' : 'Create Account'}
         </button>
-          className="w-full rounded-full bg-brand-600 py-2 text-white hover:bg-brand-700"
-        >
-          Sign up
-        </button>
       </form>
     </div>
   );
