@@ -1,0 +1,140 @@
+🚨 CRITICAL ISSUE: YOU DEPLOYED ONLY FRONTEND!
+
+ERROR: POST https://aicte-ai-client.vercel.app/api/auth/register 404
+
+This means you deployed the CLIENT folder only, not the full app!
+
+==============================================
+THE PROBLEM:
+==============================================
+
+You have TWO parts:
+1. CLIENT (frontend - React)
+2. SERVER (backend - Express API)
+
+You deployed ONLY the client!
+URL: https://aicte-ai-client.vercel.app ❌
+
+You need to deploy the ENTIRE project (root folder)!
+
+==============================================
+HOW TO FIX - OPTION 1: DELETE & REDEPLOY
+==============================================
+
+STEP 1: Delete Wrong Deployment
+1. Go to: https://vercel.com
+2. Find project: "aicte-ai-client"
+3. Settings → scroll down → Delete Project
+4. Confirm deletion
+
+STEP 2: Deploy Correctly
+1. Vercel Dashboard → Add New → Project
+2. Import: soul-abhi/AICTE-AI
+3. IMPORTANT: Root Directory should be: . (dot, meaning root)
+4. Framework Preset: Other
+5. Build Command: npm run vercel-build
+6. Output Directory: client/dist
+7. Install Command: npm install
+
+STEP 3: Add Environment Variables
+Go to Environment Variables section:
+
+Add these 6 (copy from server/.env):
+- MONGODB_URI
+- JWT_SECRET  
+- HUGGINGFACE_API_URL
+- HUGGINGFACE_API_KEY
+- NODE_ENV = production
+- CLIENT_ORIGIN = *
+
+Check all 3 boxes for each!
+
+STEP 4: Deploy
+Click "Deploy" button
+
+STEP 5: MongoDB Whitelist
+1. https://cloud.mongodb.com
+2. Network Access → Add IP → 0.0.0.0/0
+
+==============================================
+HOW TO FIX - OPTION 2: UPDATE EXISTING
+==============================================
+
+STEP 1: Update Project Settings
+1. Go to your Vercel project
+2. Settings → General
+3. Root Directory: change to . (dot)
+4. Save
+
+STEP 2: Redeploy
+1. Deployments tab
+2. Latest → ... → Redeploy
+3. Uncheck "Use existing Build Cache"
+4. Redeploy
+
+==============================================
+WHY THIS MATTERS:
+==============================================
+
+Your vercel.json has TWO builds:
+1. server/src/index.js → Backend API
+2. client/package.json → Frontend
+
+Both need to be deployed from the ROOT folder!
+
+When you deployed "client" folder:
+- ✅ Frontend works
+- ❌ Backend missing (404 errors)
+- ❌ No API routes
+- ❌ No database connection
+
+When you deploy ROOT folder:
+- ✅ Frontend works
+- ✅ Backend works
+- ✅ API routes work
+- ✅ Database connects
+
+==============================================
+WHAT YOUR URLs SHOULD BE:
+==============================================
+
+❌ WRONG: https://aicte-ai-client.vercel.app
+✅ CORRECT: https://aicte-ai.vercel.app
+
+OR
+
+✅ CORRECT: https://your-project-name.vercel.app
+
+The URL should NOT have "-client" in it!
+
+==============================================
+AFTER FIXING:
+==============================================
+
+Test your app:
+1. Go to your Vercel URL
+2. Click Register
+3. Fill the form
+4. Should work! ✅
+
+If still 404:
+- Check Vercel Functions tab for backend logs
+- Make sure environment variables are added
+- Make sure MongoDB whitelist is set
+
+==============================================
+QUICK CHECKLIST:
+==============================================
+
+□ Deleted wrong "aicte-ai-client" project
+□ Imported soul-abhi/AICTE-AI (full repo)
+□ Root Directory set to: . (dot/root)
+□ Build Command: npm run vercel-build
+□ Output Directory: client/dist
+□ Added 6 environment variables
+□ All variables checked for Prod/Preview/Dev
+□ MongoDB whitelist: 0.0.0.0/0
+□ Deployed successfully
+□ Tested registration - works!
+
+==============================================
