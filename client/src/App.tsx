@@ -2,8 +2,7 @@ import { Suspense, lazy } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { Layout } from './components/Layout';
 import { LoaderScreen } from './components/LoaderScreen';
-import { ProtectedRoute } from './auth/ProtectedRoute';
-import { useAuth } from './auth/AuthProvider';
+// Authentication removed: ProtectedRoute and useAuth imports deleted
 
 const HomePage = lazy(() => import('./pages/HomePage'));
 const ResumeBuilderPage = lazy(() => import('./pages/ResumeBuilderPage'));
@@ -15,50 +14,17 @@ const RegisterPage = lazy(() => import('./pages/RegisterPage'));
 const SharePortfolioPage = lazy(() => import('./pages/SharePortfolioPage'));
 
 export default function App() {
-  const { isAuthenticated } = useAuth();
-
   return (
     <Layout>
       <Suspense fallback={<LoaderScreen text="Loading..." />}>
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route
-            path="/resume"
-            element={
-              <ProtectedRoute>
-                <ResumeBuilderPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/ai-resume"
-            element={
-              <ProtectedRoute>
-                <AIResumeBuilderPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/portfolio"
-            element={
-              <ProtectedRoute>
-                <PortfolioBuilderPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/ats"
-            element={
-              <ProtectedRoute>
-                <ATSCheckerPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route path="/login" element={isAuthenticated ? <Navigate to="/" /> : <LoginPage />} />
-          <Route
-            path="/register"
-            element={isAuthenticated ? <Navigate to="/" /> : <RegisterPage />}
-          />
+          <Route path="/resume" element={<ResumeBuilderPage />} />
+          <Route path="/ai-resume" element={<AIResumeBuilderPage />} />
+          <Route path="/portfolio" element={<PortfolioBuilderPage />} />
+          <Route path="/ats" element={<ATSCheckerPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
           <Route path="/share/:slug" element={<SharePortfolioPage />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>

@@ -1,10 +1,8 @@
 import { Link, NavLink } from 'react-router-dom';
 import { useTheme } from '../theme/ThemeProvider';
-import { useAuth } from '../auth/AuthProvider';
 
 export const Layout = ({ children }: { children: React.ReactNode }) => {
   const { theme, toggleTheme } = useTheme();
-  const { isAuthenticated, logout } = useAuth();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-100 via-white to-slate-200 text-slate-900 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 dark:text-slate-100">
@@ -36,22 +34,6 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
             >
               {theme === 'light' ? 'Dark' : 'Light'}
             </button>
-            {isAuthenticated ? (
-              <button
-                type="button"
-                onClick={logout}
-                className="rounded-full bg-brand-600 px-3 py-1 text-white hover:bg-brand-700"
-              >
-                Logout
-              </button>
-            ) : (
-              <NavLink
-                to="/login"
-                className="rounded-full bg-brand-600 px-3 py-1 text-white hover:bg-brand-700"
-              >
-                Login
-              </NavLink>
-            )}
           </div>
         </nav>
       </header>
