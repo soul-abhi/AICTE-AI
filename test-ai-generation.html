@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Generation Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            border-bottom: 3px solid #4CAF50;
+            padding-bottom: 10px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            background: #f9f9f9;
+            border-left: 4px solid #2196F3;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin: 5px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e8f5e9;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            font-family: 'Courier New', monospace;
+        }
+        .error {
+            background: #ffebee;
+            color: #c62828;
+        }
+        .loading {
+            background: #fff3e0;
+            color: #ef6c00;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .log {
+            background: #263238;
+            color: #aed581;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .log-entry {
+            margin: 5px 0;
+        }
+        .success { color: #66bb6a; }
+        .error-log { color: #ef5350; }
+        .info { color: #42a5f5; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 AI Generation Test Suite</h1>
+        <p>Test the AI generation API endpoints to ensure everything works correctly.</p>
+
+        <!-- Test 1: Generate Summary -->
+        <div class="test-section">
+            <h3>Test 1: Generate Professional Summary</h3>
+            <input type="text" id="name" placeholder="Enter your name (e.g., John Doe)" value="John Doe">
+            <input type="text" id="skills" placeholder="Your skills (e.g., React, Node.js, Python)" value="React, Node.js, MongoDB, TypeScript">
+            <input type="text" id="experience" placeholder="Your experience (e.g., Software Developer at Google)" value="Full Stack Developer at Tech Corp">
+            <button onclick="testSummary()">🌟 Generate Summary</button>
+            <div id="summary-result"></div>
+        </div>
+
+        <!-- Test 2: Generate Skills -->
+        <div class="test-section">
+            <h3>Test 2: Generate Skills List</h3>
+            <input type="text" id="role" placeholder="Your role (e.g., Frontend Developer)" value="Full Stack Developer">
+            <input type="text" id="tech" placeholder="Technologies used (e.g., React, Next.js)" value="React, Node.js, Express">
+            <button onclick="testSkills()">💡 Generate Skills</button>
+            <div id="skills-result"></div>
+        </div>
+
+        <!-- Test 3: Generate Experience Description -->
+        <div class="test-section">
+            <h3>Test 3: Generate Experience Description</h3>
+            <input type="text" id="exp-role" placeholder="Role (e.g., Senior Developer)" value="Senior Full Stack Developer">
+            <input type="text" id="exp-company" placeholder="Company name" value="Tech Innovations Inc">
+            <input type="text" id="exp-duration" placeholder="Duration (e.g., 2020-2023)" value="Jan 2021 - Present">
+            <button onclick="testExperience()">📋 Generate Experience</button>
+            <div id="experience-result"></div>
+        </div>
+
+        <!-- Test 4: Generate Project Description -->
+        <div class="test-section">
+            <h3>Test 4: Generate Project Description</h3>
+            <input type="text" id="proj-title" placeholder="Project title" value="E-commerce Platform">
+            <input type="text" id="proj-tech" placeholder="Tech stack" value="React, Node.js, MongoDB, Stripe">
+            <button onclick="testProject()">🚀 Generate Project</button>
+            <div id="project-result"></div>
+        </div>
+
+        <!-- Test 5: API Health Check -->
+        <div class="test-section">
+            <h3>Test 5: API Health Check</h3>
+            <button onclick="testHealth()">🏥 Check API Health</button>
+            <div id="health-result"></div>
+        </div>
+
+        <!-- Logs -->
+        <div class="log" id="logs">
+            <div class="log-entry info">📝 Console logs will appear here...</div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:5000/api';
+        
+        function addLog(message, type = 'info') {
+            const logs = document.getElementById('logs');
+            const timestamp = new Date().toLocaleTimeString();
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            entry.textContent = `[${timestamp}] ${message}`;
+            logs.insertBefore(entry, logs.firstChild);
+        }
+
+        async function testSummary() {
+            const resultDiv = document.getElementById('summary-result');
+            const name = document.getElementById('name').value;
+            const skills = document.getElementById('skills').value;
+            const experience = document.getElementById('experience').value;
+            
+            if (!name) {
+                resultDiv.innerHTML = '<div class="result error">Please enter a name!</div>';
+                return;
+            }
+            
+            resultDiv.innerHTML = '<div class="result loading">⏳ Generating summary...</div>';
+            addLog('🚀 Starting summary generation...', 'info');
+            
+            try {
+                const prompt = `Write a professional summary for ${name}'s resume.
+
+Background:
+- Experience: ${experience || 'Entry-level professional'}
+- Skills: ${skills || 'various technical skills'}
+
+Guidelines:
+- 3-4 sentences, around 60-80 words
+- Write in a natural, conversational but professional tone
+- Mention specific skills and experience
+- Avoid buzzwords
+
+Just write the summary:`;
+
+                addLog(`📝 Prompt length: ${prompt.length} characters`, 'info');
+                
+                const response = await fetch(`${API_BASE}/ai/generate`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ prompt, maxTokens: 250 })
+                });
+                
+                addLog(`📡 Response status: ${response.status}`, 'success');
+                
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.message || `HTTP ${response.status}`);
+                }
+                
+                const data = await response.json();
+                addLog('✅ Summary generated successfully!', 'success');
+                resultDiv.innerHTML = `<div class="result">${data.text}</div>`;
+            } catch (error) {
+                addLog(`❌ Error: ${error.message}`, 'error-log');
+                resultDiv.innerHTML = `<div class="result error">❌ Error: ${error.message}</div>`;
+            }
+        }
+
+        async function testSkills() {
+            const resultDiv = document.getElementById('skills-result');
+            const role = document.getElementById('role').value;
+            const tech = document.getElementById('tech').value;
+            
+            resultDiv.innerHTML = '<div class="result loading">⏳ Generating skills...</div>';
+            addLog('🚀 Starting skills generation...', 'info');
+            
+            try {
+                const prompt = `Based on this profile, suggest relevant technical skills:
+
+Profile:
+- Role: ${role || 'Software Developer'}
+- Technologies: ${tech || 'Modern web development'}
+
+List 12-15 specific technical skills and tools that would be relevant. Include programming languages, frameworks, databases, tools, and 2-3 soft skills.
+
+Just list the skills separated by commas, nothing else:`;
+
+                const response = await fetch(`${API_BASE}/ai/generate`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ prompt, maxTokens: 200 })
+                });
+                
+                addLog(`📡 Response status: ${response.status}`, 'success');
+                
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.message || `HTTP ${response.status}`);
+                }
+                
+                const data = await response.json();
+                addLog('✅ Skills generated successfully!', 'success');
+                resultDiv.innerHTML = `<div class="result">${data.text}</div>`;
+            } catch (error) {
+                addLog(`❌ Error: ${error.message}`, 'error-log');
+                resultDiv.innerHTML = `<div class="result error">❌ Error: ${error.message}</div>`;
+            }
+        }
+
+        async function testExperience() {
+            const resultDiv = document.getElementById('experience-result');
+            const role = document.getElementById('exp-role').value;
+            const company = document.getElementById('exp-company').value;
+            const duration = document.getElementById('exp-duration').value;
+            
+            if (!role || !company) {
+                resultDiv.innerHTML = '<div class="result error">Please enter role and company!</div>';
+                return;
+            }
+            
+            resultDiv.innerHTML = '<div class="result loading">⏳ Generating experience description...</div>';
+            addLog('🚀 Starting experience generation...', 'info');
+            
+            try {
+                const prompt = `Write 3-4 bullet points describing this work experience:
+
+Position: ${role}
+Company: ${company}
+Duration: ${duration}
+
+Write bullet points that describe actual work and impact.
+Format: Start each line with • symbol
+
+Write the bullets:`;
+
+                const response = await fetch(`${API_BASE}/ai/generate`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ prompt, maxTokens: 300 })
+                });
+                
+                addLog(`📡 Response status: ${response.status}`, 'success');
+                
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.message || `HTTP ${response.status}`);
+                }
+                
+                const data = await response.json();
+                addLog('✅ Experience description generated!', 'success');
+                resultDiv.innerHTML = `<div class="result">${data.text}</div>`;
+            } catch (error) {
+                addLog(`❌ Error: ${error.message}`, 'error-log');
+                resultDiv.innerHTML = `<div class="result error">❌ Error: ${error.message}</div>`;
+            }
+        }
+
+        async function testProject() {
+            const resultDiv = document.getElementById('project-result');
+            const title = document.getElementById('proj-title').value;
+            const tech = document.getElementById('proj-tech').value;
+            
+            if (!title) {
+                resultDiv.innerHTML = '<div class="result error">Please enter project title!</div>';
+                return;
+            }
+            
+            resultDiv.innerHTML = '<div class="result loading">⏳ Generating project description...</div>';
+            addLog('🚀 Starting project generation...', 'info');
+            
+            try {
+                const prompt = `Write 3-4 bullet points describing this project:
+
+Project: ${title}
+Tech Stack: ${tech}
+
+Describe what the project does and features built.
+Format: Start each line with • symbol
+
+Write the bullets:`;
+
+                const response = await fetch(`${API_BASE}/ai/generate`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ prompt, maxTokens: 300 })
+                });
+                
+                addLog(`📡 Response status: ${response.status}`, 'success');
+                
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.message || `HTTP ${response.status}`);
+                }
+                
+                const data = await response.json();
+                addLog('✅ Project description generated!', 'success');
+                resultDiv.innerHTML = `<div class="result">${data.text}</div>`;
+            } catch (error) {
+                addLog(`❌ Error: ${error.message}`, 'error-log');
+                resultDiv.innerHTML = `<div class="result error">❌ Error: ${error.message}</div>`;
+            }
+        }
+
+        async function testHealth() {
+            const resultDiv = document.getElementById('health-result');
+            resultDiv.innerHTML = '<div class="result loading">⏳ Checking API health...</div>';
+            addLog('🏥 Checking API health...', 'info');
+            
+            try {
+                const response = await fetch(`${API_BASE}/health`);
+                const data = await response.json();
+                
+                if (data.status === 'ok') {
+                    addLog('✅ API is healthy!', 'success');
+                    resultDiv.innerHTML = `<div class="result">✅ API is running! Status: ${data.status}</div>`;
+                } else {
+                    throw new Error('API returned unexpected status');
+                }
+            } catch (error) {
+                addLog(`❌ Error: ${error.message}`, 'error-log');
+                resultDiv.innerHTML = `<div class="result error">❌ API Error: ${error.message}</div>`;
+            }
+        }
+
+        // Test health on load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                addLog('🎯 Test suite loaded. Click buttons to test AI generation!', 'success');
+                testHealth();
+            }, 500);
+        });
+    </script>
+</body>
+</html>
