@@ -126,7 +126,10 @@ export default function AIResumeBuilderPage() {
       alert('Please enter your name first');
       return;
     }
+    
+    console.log('🚀 Starting AI summary generation...');
     setIsGenerating(true);
+    
     try {
       const experienceContext = experience
         .filter(e => e.role && e.company)
@@ -159,13 +162,19 @@ Guidelines:
 
 Just write the summary:`;
 
+      console.log('📝 Calling AI API with prompt...');
       const text = await aiApi.generate(prompt, 250);
+      console.log('✅ AI response received:', text);
       setAiSummary(text.trim());
-    } catch (error) {
-      console.error('Error generating summary:', error);
+    } catch (error: any) {
+      console.error('❌ Error generating summary:', error);
+      console.error('Error details:', error.response?.data || error.message);
+      const errorMsg = error.response?.data?.message || error.message || 'Failed to generate summary';
+      alert(`Error: ${errorMsg}`);
       setAiSummary('Failed to generate summary. Please try again.');
     } finally {
       setIsGenerating(false);
+      console.log('🏁 Generation complete');
     }
   };
 
