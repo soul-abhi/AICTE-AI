@@ -38,13 +38,24 @@ app.use(errorHandler);
 
 const port = process.env.PORT || 5000;
 
-connectDB()
-    .then(() => {
-        app.listen(port, () => {
-            console.log(`API running on port ${port}`);
+// MongoDB is optional - connect if URI is provided
+if (process.env.MONGODB_URI) {
+    connectDB()
+        .then(() => {
+            console.log('MongoDB connected - Resume/Portfolio saving enabled');
+            app.listen(port, () => {
+                console.log(`API running on port ${port}`);
+            });
+        })
+        .catch((error) => {
+            console.warn('MongoDB connection failed - Resume/Portfolio saving disabled', error.message);
+            app.listen(port, () => {
+                console.log(`API running on port ${port} (without MongoDB)`);
+            });
         });
-    })
-    .catch((error) => {
-        console.error('Failed to connect to MongoDB', error);
-        process.exit(1);
+} else {
+    console.log('MongoDB URI not provided - Resume/Portfolio saving disabled');
+    app.listen(port, () => {
+        console.log(`API running on port ${port} (without MongoDB)`);
     });
+}

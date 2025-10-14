@@ -48,4 +48,9 @@ coverage/
 
 # Misc
 *.pem
+
+# Documentation (keep only README.md)
+*.txt
+test-*.html
+playground-*.js
 .cache/
