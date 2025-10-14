@@ -6,7 +6,6 @@ import morgan from 'morgan';
 import dotenv from 'dotenv';
 import { connectDB } from './lib/db.js';
 import { errorHandler } from './middleware/errorHandler.js';
-import authRoutes from './routes/authRoutes.js';
 import resumeRoutes from './routes/resumeRoutes.js';
 import portfolioRoutes from './routes/portfolioRoutes.js';
 import atsRoutes from './routes/atsRoutes.js';
@@ -30,8 +29,6 @@ app.use(morgan('dev'));
 app.get('/api/health', (_req, res) => {
     res.json({ status: 'ok' });
 });
-
-app.use('/api/auth', authRoutes);
 app.use('/api/resumes', resumeRoutes);
 app.use('/api/portfolios', portfolioRoutes);
 app.use('/api/ats', atsRoutes);
