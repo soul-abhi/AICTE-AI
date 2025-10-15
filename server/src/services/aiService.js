@@ -165,55 +165,69 @@ ${name}`;
 };
 
 export const generateAIContent = async (prompt, maxTokens = 256) => {
-    const apiUrl = process.env.HUGGINGFACE_API_URL?.trim();
-    const apiKey = process.env.HUGGINGFACE_API_KEY?.trim();
+    try {
+        const apiUrl = process.env.HUGGINGFACE_API_URL?.trim();
+        const apiKey = process.env.HUGGINGFACE_API_KEY?.trim();
 
-    // Try Hugging Face if credentials are available
-    if (apiUrl && apiKey) {
-        try {
-            console.log(` Calling Hugging Face API: ${apiUrl}`);
-            const response = await axios.post(
-                apiUrl,
-                {
-                    inputs: wrapPrompt(prompt),
-                    parameters: {
-                        max_new_tokens: maxTokens,
-                        temperature: 0.7,
-                        return_full_text: false
-                    }
-                },
-                {
-                    headers: {
-                        Authorization: `Bearer ${apiKey}`,
-                        'Content-Type': 'application/json'
+        // Try Hugging Face if credentials are available
+        if (apiUrl && apiKey) {
+            try {
+                console.log(`🚀 Calling Hugging Face API: ${apiUrl}`);
+                const response = await axios.post(
+                    apiUrl,
+                    {
+                        inputs: wrapPrompt(prompt),
+                        parameters: {
+                            max_new_tokens: maxTokens,
+                            temperature: 0.7,
+                            return_full_text: false
+                        }
                     },
-                    timeout: 30000
+                    {
+                        headers: {
+                            Authorization: `Bearer ${apiKey}`,
+                            'Content-Type': 'application/json'
+                        },
+                        timeout: 30000
+                    }
+                );
+
+                const data = response.data;
+                console.log('✅ Hugging Face response received');
+
+                let output;
+                if (Array.isArray(data)) {
+                    output = data[0]?.generated_text || data[0]?.text;
+                } else {
+                    output = data.generated_text || data.text || data[0]?.generated_text;
                 }
-            );
 
-            const data = response.data;
-            console.log('✅ Hugging Face response received');
-
-            let output;
-            if (Array.isArray(data)) {
-                output = data[0]?.generated_text || data[0]?.text;
-            } else {
-                output = data.generated_text || data.text || data[0]?.generated_text;
+                if (output && output.trim()) {
+                    return output.trim();
+                }
+            } catch (error) {
+                if (error.response) {
+                    console.error('❌ Hugging Face API error:', error.response.status, error.response.data);
+                } else {
+                    console.error('❌ Hugging Face request failed:', error.message);
+                }
             }
-
-            if (output) {
-                return output.trim();
-            }
-        } catch (error) {
-            if (error.response) {
-                console.error('❌ Hugging Face API error:', error.response.status, error.response.data);
-            } else {
-                console.error('❌ Hugging Face request failed:', error.message);
-            }
+        } else {
+            console.log('💡 No Hugging Face credentials - using built-in generator');
         }
-    }
 
-    // Use smart fallback
-    console.log('💡 Using built-in content generator');
-    return generateFallback(prompt);
+        // Use smart fallback
+        console.log('💡 Using built-in content generator');
+        const fallbackResult = generateFallback(prompt);
+        
+        if (!fallbackResult || fallbackResult.trim() === '') {
+            throw new Error('Failed to generate content');
+        }
+        
+        return fallbackResult;
+    } catch (error) {
+        console.error('❌ Error in generateAIContent:', error);
+        // Return a basic fallback message instead of throwing
+        return 'Professional with expertise in software development, committed to delivering high-quality results and continuous learning. Strong technical foundation combined with excellent communication and teamwork abilities.';
+    }
 };

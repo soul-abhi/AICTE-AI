@@ -12,11 +12,23 @@ export const generateText = async (req, res) => {
 
         console.log(`📝 Generating text with ${maxTokens} max tokens...`);
         const text = await generateAIContent(prompt, maxTokens);
+        
+        if (!text || text.trim() === '') {
+            console.log('❌ Generated text is empty');
+            return res.status(500).json({ 
+                error: 'Failed to generate content', 
+                message: 'Generated content was empty' 
+            });
+        }
+        
         console.log('✅ Text generated successfully');
-
         res.json({ text });
     } catch (error) {
         console.error('❌ Error in generateText controller:', error);
-        res.status(500).json({ error: 'Failed to generate text', message: error.message });
+        console.error('Error stack:', error.stack);
+        res.status(500).json({ 
+            error: 'Failed to generate text', 
+            message: error.message || 'Unknown error occurred' 
+        });
     }
 };
