@@ -1,19 +1,29 @@
 {
-  "name": "ai-resume-portfolio-builder",
+  "name": "ai-resume-builder",
+  "version": "0.1.0",
   "private": true,
-  "workspaces": [
-    "client",
-    "server"
-  ],
   "scripts": {
-    "dev": "npm run dev --workspace=client",
-    "build": "npm run build --workspace=client && npm run build --workspace=server",
-    "lint": "npm run lint --workspace=client && npm run lint --workspace=server",
-    "start:server": "npm start --workspace=server",
-    "start:client": "npm run preview --workspace=client",
-    "vercel-build": "npm run build --workspace=client"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
   },
-  "engines": {
-    "node": ">=18.x"
+  "dependencies": {
+    "next": "14.2.3",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "framer-motion": "^11.2.10",
+    "openai": "^4.47.1",
+    "react-hot-toast": "^2.4.1",
+    "lucide-react": "^0.379.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "autoprefixer": "^10.4.19",
+    "postcss": "^8.4.38",
+    "tailwindcss": "^3.4.3",
+    "typescript": "^5"
   }
 }
